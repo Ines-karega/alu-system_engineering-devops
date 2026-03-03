@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
-# Installs nginx web server and configures it to return "Holberton School"
+# Installs nginx server
 
 sudo apt-get update
-sudo apt-get install -y install nginx
+sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
-
 echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
-
-sudo service nginx restart
+sudo service nginx start
