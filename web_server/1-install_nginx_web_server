@@ -1,9 +1,0 @@
-#!/usr/bin/env bash
-# Installs nginx web server and configures it to return "Holberton School"
-
-sudo apt-get update -y
-sudo apt-get install -y nginx
-
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
-
-sudo service nginx restart
