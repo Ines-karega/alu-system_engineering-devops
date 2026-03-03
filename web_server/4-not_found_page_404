@@ -1,32 +1,44 @@
 #!/usr/bin/env bash
-# Configures Nginx with a custom 404 page containing "Ceci n'est pas une page"
-# and a redirection for /redirect_me
+# Configures Nginx with custom 404 and redirect
 
-sudo apt-get update
-sudo apt-get -y install nginx
-sudo ufw allow 'Nginx HTTP'
+apt-get update -y
+apt-get install -y nginx
 
-# Content for index
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
+# Allow HTTP
+ufw allow 'Nginx HTTP'
 
-# Custom 404 page
-echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html > /dev/null
+# Create index page
+echo "Holberton School" | tee /var/www/html/index.html > /dev/null
 
-# Nginx configuration update (reset and set approach)
-config_file="/etc/nginx/sites-available/default"
+# Create custom 404 page (NO newline issues)
+printf "Ceci n'est pas une page" | tee /var/www/html/404.html > /dev/null
 
-# 1. First, remove any previous custom configuration to avoid duplicates
-sudo sed -i '/error_page 404/d' "$config_file"
-sudo sed -i '/location \/redirect_me/,/}/d' "$config_file"
+# Overwrite nginx default configuration (ACTIVE FILE)
+cat <<EOF > /etc/nginx/sites-enabled/default
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-# 2. Add the configuration back cleanly
-# We replace the 'server_name _;' line with original + our new rules
-# This is more robust than appending multiple times
-new_config="server_name _;\n\n\terror_page 404 /404.html;\n\n\tlocation /redirect_me {\n\t\treturn 301 https://www.youtube.com;\n\t}"
-sudo sed -i "s/server_name _;/$new_config/" "$config_file"
+    root /var/www/html;
+    index index.html;
 
-# Check if configuration is valid
-sudo nginx -t
+    server_name _;
 
-# Restart Nginx
-sudo service nginx restart
+    location /redirect_me {
+        return 301 https://www.youtube.com;
+    }
+
+    error_page 404 /404.html;
+
+    location = /404.html {
+        internal;
+    }
+
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
+}
+EOF
+
+# Restart nginx
+service nginx restart
