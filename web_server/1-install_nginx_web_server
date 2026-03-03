@@ -1,5 +1,11 @@
+#!/usr/bin/env bash
+# Updates the package list
 sudo apt-get update
+# Installs nginx server
 sudo apt-get -y install nginx
+# Allows nginx through the firewall
 sudo ufw allow 'Nginx HTTP'
+# Creates a simple HTML page in the default web root with the text we want
 echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
-sudo service nginx restart
+# Restarts the nginx service
+sudo service nginx start
