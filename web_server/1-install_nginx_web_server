@@ -1,8 +1,12 @@
-sudo apt-get update
-# Installs nginx server
-sudo apt-get -y install nginx
+#!/usr/bin/env bash
+# Update the package list to make sure we have the latest information
+apt-get update -y
 
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
+# Install nginx web server package without asking for confirmation
+apt-get install -y nginx
 
+# Create a simple HTML page in the default web root with the text we want
+echo "Holberton School for the win!" > /var/www/html/index.html
 
-sudo service nginx restart
+# Start the nginx service (without using systemctl)
+service nginx start
