@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
-# Configures a new Ubuntu machine to the requirements
-# of task 0 of the Load balancer project.
+# Configures a new Ubuntu machine's Nginx to include a custom
+# HTTP response header X-Served-By with the server's hostname
 
 sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
-# Add custom header X-Served-By with hostname to default site config
-# First, remove any existing X-Served-By headers to avoid duplicates
+# Clean up any existing X-Served-By headers from ALL possible locations
+# to ensure idempotency and avoid duplicates/conflicts
+sudo sed -i '/add_header X-Served-By/d' /etc/nginx/nginx.conf
 sudo sed -i '/add_header X-Served-By/d' /etc/nginx/sites-available/default
-# Then add it once after server_name line with the 'always' parameter
+
+# Add the header to the default site configuration in the server block
+# This is the most reliable place for it to be served correctly.
+# We include 'always' to ensure it's sent even on error pages (like 404).
 sudo sed -i "/server_name _;/a \	add_header X-Served-By \$hostname always;" /etc/nginx/sites-available/default
 
-# Ensure sites-enabled link is correct
+# Ensure sites-enabled is correctly linked to sites-available
 if [ ! -L /etc/nginx/sites-enabled/default ]; then
     sudo rm -f /etc/nginx/sites-enabled/default
     sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
