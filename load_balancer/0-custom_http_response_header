@@ -7,7 +7,8 @@ sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
-# Add custom header X-Served-By with the hostname of the server
-sudo sed -i "/http {/a \\\tadd_header X-Served-By \$hostname;" /etc/nginx/nginx.conf
+# Add custom header X-Served-By with hostname to all responses
+sudo sed -i "/http {/a \\\tadd_header X-Served-By \$hostname always;" /etc/nginx/nginx.conf
 
+# Restart Nginx to apply changes
 sudo service nginx restart
