@@ -17,8 +17,8 @@ frontend ines_frontend
 
 backend ines_backend
     balance roundrobin
-    server 7015-web-01 44.205.246.25:80 check
-    server 7015-web-02 54.173.9.253:80 check
+    server 67000-web-01 44.205.246.25:80 check
+    server 67000-web-02 54.173.9.253:80 check
 EOF
 
 sudo service haproxy restart

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Configures the hostname
+sudo hostnamectl --set-hostname 67000-web-02
 # Configures a new Ubuntu machine's Nginx to include a custom
 # HTTP response header X-Served-By with the server's hostname
 # shellcheck disable=SC2154
