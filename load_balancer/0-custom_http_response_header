@@ -9,10 +9,10 @@ sudo ufw allow 'Nginx HTTP'
 # Add custom header X-Served-By with hostname to default site config
 # First, remove any existing X-Served-By headers to avoid duplicates
 sudo sed -i '/add_header X-Served-By/d' /etc/nginx/sites-available/default
-# Then add it once after server_name line
-sudo sed -i "/server_name _;/a \	add_header X-Served-By \$hostname;" /etc/nginx/sites-available/default
+# Then add it once after server_name line with the 'always' parameter
+sudo sed -i "/server_name _;/a \	add_header X-Served-By \$hostname always;" /etc/nginx/sites-available/default
 
-# Ensure sites-enabled link is correct (especially for web-02)
+# Ensure sites-enabled link is correct
 if [ ! -L /etc/nginx/sites-enabled/default ]; then
     sudo rm -f /etc/nginx/sites-enabled/default
     sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
