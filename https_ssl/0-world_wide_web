@@ -13,8 +13,9 @@ check_domain() {
     # Identifying record type and destination using dig and awk
     # shellcheck disable=SC2086
     dig $sub.$dom | awk -v sub_name="$sub" '
-        !/^;/ && /\s+IN\s+(A|CNAME)\s+/ {
+        $3 == "IN" && ($4 == "A" || $4 == "CNAME") {
             print "The subdomain " sub_name " is a " $4 " record and points to " $5
+            exit
         }
     '
 }
