@@ -12,10 +12,19 @@ check_domain() {
     local dom=$2
     # Identifying record type and destination using dig and awk
     # shellcheck disable=SC2086
-    dig $sub.$dom | awk -v sub_name="$sub" '
-        $3 == "IN" && ($4 == "A" || $4 == "CNAME") {
-            print "The subdomain " sub_name " is a " $4 " record and points to " $5
-            exit
+    dig "$sub.$dom" | awk -v sub_name="$sub" '
+        {
+            for (i=1; i<=NF; i++) {
+                if ($i == "IN") {
+                    type = $(i+1)
+                    dest = $(i+2)
+                    if (type == "A" || type == "CNAME") {
+                        sub(/\.$/, "", dest)
+                        print "The subdomain " sub_name " is a " type " record and points to " dest
+                        exit
+                    }
+                }
+            }
         }
     '
 }

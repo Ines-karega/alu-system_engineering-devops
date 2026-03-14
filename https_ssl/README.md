@@ -1,14 +1,26 @@
-# HTTPS SSL
+# 0x0C. HTTPS SSL
 
-This project focuses on securing web infrastructure using HTTPS and SSL. It includes a script for subdomain auditing and HAProxy configurations for SSL termination and redirection.
+## Resources
+### Read or watch:
+* [What is HTTPS?](https://www.instantssl.com/http-vs-https.html)
+* [What are the 2 main elements that SSL is providing](https://www.sslshopper.com/what-is-ssl.html)
+* [HAProxy SSL termination on Ubuntu16.04](https://www.digitalocean.com/community/tutorials/how-to-implement-ssl-termination-with-haproxy-on-ubuntu-14-04)
+* [SSL termination](https://en.wikipedia.org/wiki/TLS_termination_proxy)
+* [Bash function](https://tldp.org/LDP/abs/html/functions.html)
+
+## Learning Objectives
+At the end of this project, you are expected to be able to explain to anyone, without the help of Google:
+* What is HTTPS SSL 2 main roles
+* What is the purpose encrypting traffic
+* What SSL termination means
 
 ## Tasks
 
 ### 0. World wide web
-A Bash script `0-world_wide_web` that displays information about subdomains (www, lb-01, web-01, web-02) for a given domain using `dig` and `awk`.
+Configure your domain zone so that the subdomain www points to your load-balancer IP (lb-01). Let’s also add other subdomains to make our life easier, and write a Bash script that will display information about subdomains.
 
 ### 1. HAproxy SSL termination
-A HAProxy configuration file `1-haproxy_ssl_termination` that terminates SSL on port 443.
+Create a certificate using certbot and configure HAproxy to accept encrypted traffic for your subdomain www.
 
 ### 2. No loophole in your website traffic
-A HAProxy configuration file `2-redirect_http_to_https` that redirects all HTTP traffic to HTTPS with a 301 status code.
+Configure HAproxy to automatically redirect HTTP traffic to HTTPS.
