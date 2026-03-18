@@ -6,12 +6,15 @@ sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
-# Remove any existing X-Served-By headers from all possible locations
-sudo sed -i '/add_header X-Served-By/d' /etc/nginx/nginx.conf
-sudo sed -i '/add_header X-Served-By/d' /etc/nginx/sites-available/default
+# Global cleanup of any existing X-Served-By headers across all Nginx configs
+# This handles unusual locations like /etc/nginx/conf.d/custom_header.conf
+sudo grep -rIl "add_header X-Served-By" /etc/nginx | xargs -r sudo sed -i '/add_header X-Served-By/d'
+
+# Capture the hostname of the server
+hostname_val=$(hostname)
 
 # Add the X-Served-By header to the http block in nginx.conf
-# Adding it right after 'http {' is the most standard for Alx tasks
-sudo sed -i "/http {/a \\\tadd_header X-Served-By \$hostname;" /etc/nginx/nginx.conf
+# This matches the successful configuration observed on web-01
+sudo sed -i "/http {/a \\\tadd_header X-Served-By \"$hostname_val\";" /etc/nginx/nginx.conf
 
 sudo service nginx restart
