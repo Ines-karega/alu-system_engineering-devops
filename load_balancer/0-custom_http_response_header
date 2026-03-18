@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
-# Configures a new Ubuntu machine's Nginx to include a custom
-# HTTP response header X-Served-By with the server's hostname
+# configures Nginx with a custom HTTP header
 # shellcheck disable=SC2154
 
 sudo apt-get update
 sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
-# Add custom header X-Served-By with the hostname of the server
+# Remove any existing X-Served-By headers from all possible locations
+sudo sed -i '/add_header X-Served-By/d' /etc/nginx/nginx.conf
+sudo sed -i '/add_header X-Served-By/d' /etc/nginx/sites-available/default
+
+# Add the X-Served-By header to the http block in nginx.conf
+# Adding it right after 'http {' is the most standard for Alx tasks
 sudo sed -i "/http {/a \\\tadd_header X-Served-By \$hostname;" /etc/nginx/nginx.conf
 
 sudo service nginx restart
