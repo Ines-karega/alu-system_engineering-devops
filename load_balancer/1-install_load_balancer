@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
-# Installs and configures HAProxy on a new Ubuntu machine
-# to distribute traffic to web-01 and web-02 using roundrobin
-
-sudo apt-get update
+# Installs and configures HAProxy to distribute traffic to web-01 and web-02 using roundrobin
+sudo apt-get update -y
 sudo apt-get -y install haproxy
 
 # Enable HAProxy to be managed via init script
 sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+
+# Remove any existing frontend/backend blocks to make script idempotent
+sudo sed -i '/^frontend ines_frontend/,$ d' /etc/haproxy/haproxy.cfg
 
 # Configure HAProxy frontend and backend
 sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null <<EOF
@@ -17,9 +18,8 @@ frontend ines_frontend
 
 backend ines_backend
     balance roundrobin
-    server 67000-web-01 44.205.246.25:80 check
-    server 67000-web-02 54.173.9.253:80 check
+    server 7015-web-01 54.204.136.7:80 check
+    server 7015-web-02 44.201.166.17:80 check
 EOF
 
 sudo service haproxy restart
-
