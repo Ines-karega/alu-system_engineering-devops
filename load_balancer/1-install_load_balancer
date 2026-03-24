@@ -1,25 +1,22 @@
 #!/usr/bin/env bash
-# Installs and configures HAProxy to distribute traffic to web-01 and web-02 using roundrobin
-sudo apt-get update -y
-sudo apt-get -y install haproxy
+# Install and configure HAProxy load balancer
 
-# Enable HAProxy to be managed via init script
-sudo sed -i 's/ENABLED=0/ENABLED=1/' /etc/default/haproxy
+apt-get update
+apt-get -y install haproxy
 
-# Remove any existing frontend/backend blocks to make script idempotent
-sudo sed -i '/^frontend ines_frontend/,$ d' /etc/haproxy/haproxy.cfg
+echo "ENABLED=1" | tee /etc/default/haproxy
 
-# Configure HAProxy frontend and backend
-sudo tee -a /etc/haproxy/haproxy.cfg > /dev/null <<EOF
+cat <<EOF >> /etc/haproxy/haproxy.cfg
 
-frontend ines_frontend
+frontend http_front
     bind *:80
-    default_backend ines_backend
+    default_backend http_back
 
-backend ines_backend
+backend http_back
     balance roundrobin
-    server 7015-web-01 54.204.136.7:80 check
-    server 7015-web-02 44.201.166.17:80 check
+    server web-01 54.204.136.7:80 check
+    server web-02 44.201.166.17:80 check
 EOF
 
-sudo service haproxy restart
+service haproxy restart
+
